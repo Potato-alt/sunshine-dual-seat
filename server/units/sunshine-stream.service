@@ -1,0 +1,21 @@
+[Unit]
+Description=Sunshine stream server (captures headless sway)
+Requires=sway-sunshine.service
+BindsTo=sway-sunshine.service
+After=sway-sunshine.service
+
+[Service]
+User=@OPERATOR_USER@
+Environment=__GLX_VENDOR_LIBRARY_NAME=nvidia
+Group=@OPERATOR_USER@
+KillMode=process
+Environment=XDG_RUNTIME_DIR=/run/user/@OPERATOR_UID@
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/@OPERATOR_UID@/bus
+Environment=PULSE_SINK=sink-sunshine-stereo
+Environment=__EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
+ExecStart=@OPERATOR_HOME@/.config/sway-sunshine/run-sunshine.sh
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=graphical.target

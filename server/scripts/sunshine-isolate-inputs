@@ -1,0 +1,33 @@
+#!/bin/bash
+# Disable every Sunshine virtual input device (passthrough mice/kbd + virtual pads)
+# in arm's Plasma session: runtime via KWin DBus + persistent entry in kcminputrc.
+# Run as arm WHENEVER new Sunshine devices appear (e.g. after connecting with a gamepad).
+# KWin reads per-device libinput config ONLY from kcminputrc, group path
+# [Libinput][vendor][product][device name with spaces], key "Enabled" (capital E!) —
+# case- and format-sensitive; kwinrc colon-format entries never worked.
+python3 - > /tmp/sunshine-devs.$$.list <<'PY'
+import re
+text = open('/proc/bus/input/devices').read()
+for block in text.split('\n\n'):
+    n = re.search(r'N: Name="([^"]+)"', block)
+    i = re.search(r'I: Bus=\w+ Vendor=([0-9a-f]+) Product=([0-9a-f]+)', block)
+    h = re.search(r'^H: Handlers=(.*)$', block, re.M)
+    if not (n and i):
+        continue
+    if not re.search(r'sunshine|passthrough', n.group(1), re.I):
+        continue
+    evs = ','.join(t for t in (h.group(1).split() if h else []) if t.startswith('event'))
+    print(int(i.group(1),16), int(i.group(2),16), evs, n.group(1))
+PY
+n=0
+while read -r vid pid evs name; do
+  [ -z "$vid" ] && continue
+  kwriteconfig6 --file kcminputrc --group Libinput --group "$vid" --group "$pid" --group "$name" --key Enabled false
+  for ev in ${evs//,/ }; do
+    busctl --user set-property org.kde.KWin "/org/kde/KWin/InputDevice/$ev" org.kde.KWin.InputDevice enabled b false 2>/dev/null
+  done
+  echo "isolated: '$name' ($vid:$pid) events=$evs"
+  n=$((n+1))
+done < /tmp/sunshine-devs.$$.list
+rm -f /tmp/sunshine-devs.$$.list
+echo "done: $n device(s)"

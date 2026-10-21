@@ -1,0 +1,7 @@
+#!/bin/bash
+# Moonlight client wrapper: HEVC 1080p60 at 25 Mbit.
+# Usage: moonlight-hd [app]   (default: Desktop)
+# The host and app can also be passed in full: moonlight-hd "Slay the Spire 2"
+HOST=@SERVER_IP@
+APP="${1:-Desktop}"
+exec moonlight stream --video-codec HEVC --1080 --fps 60 --bitrate 25000 "$HOST" "$APP"

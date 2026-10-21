@@ -1,0 +1,8 @@
+#!/bin/bash
+# Client side of the clipboard bridge: local clipboard -> remote session clipboard.
+# Reads the local KDE clipboard over D-Bus and pipes it through SSH to the
+# server-side game-clip-in helper (which wl-copies it into the streamed session).
+# Klipper quirk: after setting the remote clipboard, a get needs ~1 s to settle.
+TXT=$(dbus-send --session --print-reply --dest=org.kde.klipper /klipper org.kde.klipper.klipper.getClipboardContents 2>/dev/null | grep 'string' | cut -d'"' -f2)
+[ -z "$TXT" ] && { echo "local clipboard is empty"; exit 1; }
+printf '%s' "$TXT" | ssh -i @SSH_KEY@ -o IdentitiesOnly=yes @DESKTOP_USER@@SERVER_IP@ sudo -n game-clip-in && echo "sent to server: ${TXT:0:60}"

@@ -1,0 +1,26 @@
+[Unit]
+Description=Headless Sway session (game) for Sunshine streaming
+Wants=sunshine-stream.service
+
+[Service]
+User=@OPERATOR_USER@
+Environment=__GLX_VENDOR_LIBRARY_NAME=nvidia
+Group=@OPERATOR_USER@
+PAMName=login
+TTYPath=/dev/@SEAT_TTY@
+Environment=WLR_BACKENDS=headless,libinput
+Environment=WLR_LIBINPUT_NO_DEVICES=1
+Environment=WLR_RENDERER=gles2
+Environment=LIBSEAT_BACKEND=noop
+Environment=XDG_SESSION_TYPE=wayland
+Environment=XDG_CURRENT_DESKTOP=sway
+Environment=XDG_RUNTIME_DIR=/run/user/@OPERATOR_UID@
+Environment=SWAYSOCK=/run/user/@OPERATOR_UID@/sway-sunshine.sock
+Environment=PULSE_SINK=sink-sunshine-stereo
+ExecStartPre=-/usr/bin/rm -f /run/user/@OPERATOR_UID@/sway-sunshine.sock
+ExecStart=/usr/bin/dbus-run-session -- /usr/bin/sway --unsupported-gpu --config @OPERATOR_HOME@/.config/sway-sunshine/config
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target

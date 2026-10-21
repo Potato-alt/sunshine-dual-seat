@@ -1,0 +1,11 @@
+# machine state / secrets — never commit
+sunshine_state.json
+credentials/
+*.log
+*.log.*
+*.bak*
+kcminputrc
+kwinrc
+# fetched tile art (reproducible via assets/fetch-icons.sh)
+assets/*.png
+assets/*.jpg

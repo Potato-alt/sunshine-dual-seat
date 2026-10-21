@@ -1,0 +1,6 @@
+#!/bin/bash
+# Client side of the clipboard bridge: remote session clipboard -> local clipboard.
+TXT=$(ssh -i @SSH_KEY@ -o IdentitiesOnly=yes @DESKTOP_USER@@SERVER_IP@ sudo -n game-clip-out 2>/dev/null)
+[ -z "$TXT" ] && { echo "server clipboard is empty"; exit 1; }
+dbus-send --session --dest=org.kde.klipper /klipper org.kde.klipper.klipper.setClipboardContents "string:$TXT" >/dev/null 2>&1
+echo "got from server: ${TXT:0:60}"

@@ -1,0 +1,1 @@
+@DESKTOP_USER@ ALL=(root) NOPASSWD: /usr/local/bin/game-clip-in, /usr/local/bin/game-clip-out

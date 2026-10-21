@@ -1,0 +1,6 @@
+#!/bin/bash
+S=$(ls /run/user/@OPERATOR_UID@/ | grep -oE "^wayland-[0-9]+$" | head -1)
+[ -n "$S" ] || exit 1
+sudo -u @OPERATOR_USER@ env XDG_RUNTIME_DIR=/run/user/@OPERATOR_UID@ WAYLAND_DISPLAY=$S \
+  wl-copy --trim-newline >/dev/null 2>&1 </dev/stdin
+exit 0

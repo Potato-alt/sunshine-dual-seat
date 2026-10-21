@@ -1,0 +1,63 @@
+{
+  "env": {
+    "PATH": "$(PATH):$(HOME)/.local/bin"
+  },
+  "apps": [
+    {
+      "name": "Server Control",
+      "detached": [
+        "@OPERATOR_HOME@/.config/sway-sunshine/server-control-launch.sh"
+      ]
+    },
+    {
+      "name": "Desktop",
+      "image-path": "desktop.png",
+      "prep-cmd": [
+        {
+          "do": "@OPERATOR_HOME@/.config/sway-sunshine/set-resolution.sh",
+          "undo": "@OPERATOR_HOME@/.config/sway-sunshine/reset-resolution.sh"
+        }
+      ]
+    },
+    {
+      "name": "Steam Big Picture",
+      "detached": [
+        "/usr/bin/steam -tenfoot"
+      ],
+      "prep-cmd": [
+        {
+          "do": "@OPERATOR_HOME@/.config/sway-sunshine/set-resolution.sh",
+          "undo": "@OPERATOR_HOME@/.config/sway-sunshine/reset-resolution.sh"
+        }
+      ],
+      "image-path": "steam.png"
+    },
+    {
+      "name": "Steam",
+      "detached": [
+        "/usr/bin/steam"
+      ],
+      "prep-cmd": [
+        {
+          "do": "@OPERATOR_HOME@/.config/sway-sunshine/set-resolution.sh",
+          "undo": "@OPERATOR_HOME@/.config/sway-sunshine/reset-resolution.sh"
+        }
+      ],
+      "image-path": "steam.png"
+    },
+    {
+      "name": "Factorio (example: native game via tile wrapper)",
+      "detached": [
+        "@OPERATOR_HOME@/.config/sway-sunshine/tile-factorio.sh"
+      ],
+      "image-path": "@OPERATOR_HOME@/.config/sunshine/icons/factorio.png"
+    },
+    {
+      "name": "Slay the Spire 2 (example: standalone game via tile wrapper)",
+      "detached": [
+        "@OPERATOR_HOME@/.config/sway-sunshine/tile-sts2.sh"
+      ],
+      "image-path": "@OPERATOR_HOME@/.config/sunshine/icons/sts2.png"
+    }
+  ]
+}
